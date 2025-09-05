@@ -1,0 +1,200 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Hammerhead — Field Survey</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#F26B21"/>
+  <link rel="icon" href="assets/icon-192.png"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <header>
+    <img src="assets/hammerhead-logo.png" alt="Hammerhead Warehouse Systems logo"/>
+    <h1>Hammerhead — Field Survey</h1>
+  </header>
+
+  <nav class="tabs">
+    <button data-view="start" class="active">Start</button>
+    <button data-view="frame">Add Frame</button>
+    <button data-view="damage">Damage</button>
+    <button data-view="done">Done</button>
+  </nav>
+
+  <main>
+    <!-- START -->
+    <section id="view-start" class="card">
+      <h2>Facility & Survey</h2>
+      <div class="row">
+        <div>
+          <label>Facility Name</label>
+          <input id="facilityName" type="text" placeholder="e.g., McLane DC — Aisle 12"/>
+        </div>
+        <div>
+          <label>Surveyor</label>
+          <input id="surveyor" type="text" placeholder="Your name"/>
+        </div>
+        <div>
+          <label>Date</label>
+          <input id="surveyDate" type="date"/>
+        </div>
+        <div>
+          <label>Notes</label>
+          <input id="surveyNotes" type="text" placeholder="Optional"/>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="goToFrame">Start adding frames</button>
+      </div>
+      <p class="small">This PWA works offline. Data is stored locally on your device.</p>
+    </section>
+
+    <!-- ADD FRAME -->
+    <section id="view-frame" class="card" hidden>
+      <h2>Add Frame</h2>
+      <div class="row">
+        <div>
+          <label>Depth (inches)
+            <button class="info" data-modal="modal-depth" aria-label="Depth help">i</button>
+          </label>
+          <input id="frameDepth" type="number" min="0" step="0.25" placeholder="e.g., 42"/>
+          <div class="helper"><img src="assets/measure_depth.svg" alt="Depth diagram"><p>Measure from the front of the upright to the back (front-to-back).</p></div>
+        </div>
+        <div>
+          <label>Width of Front Post (inches)
+            <button class="info" data-modal="modal-width" aria-label="Width help">i</button>
+          </label>
+          <input id="frameWidth" type="number" min="0" step="0.125" placeholder='e.g., 3.0'/>
+          <div class="helper"><img src="assets/measure_width.svg" alt="Width diagram"><p>Measure the <b>front post width</b>.</p></div>
+        </div>
+
+        <div>
+          <label>Backer Type</label>
+          <select id="backerType">
+            <option value="">Select…</option>
+            <option value='3"'>3"</option>
+            <option value='1-5/8"'>1-5/8"</option>
+            <option value="C3">C3</option>
+            <option value="C4">C4</option>
+            <option value="C5">C5</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Color</label>
+          <input id="color" type="text" placeholder="e.g., Gray"/>
+        </div>
+
+        <div>
+          <label>Strut Heights (inches from floor)
+            <button class="info" data-modal="modal-strut-heights" aria-label="Strut heights help">i</button>
+          </label>
+          <input id="strutHeights" type="text" placeholder="Enter comma-separated, e.g., 12, 32, 58"/>
+          <div class="helper"><img src="assets/strut_heights.svg" alt="Strut heights diagram"><p>Measure from the <b>floor to the top</b> of each horizontal strut — list in ascending order.</p></div>
+        </div>
+
+        <div>
+          <label>Hole Punch Style
+            <button class="info" data-modal="modal-hole" aria-label="Hole punch style help">i</button>
+          </label>
+          <select id="holeStyle">
+            <option value="">Choose sample # from image…</option>
+            <option>1</option><option>2</option><option>3</option>
+            <option>4</option><option>5</option><option>6</option>
+          </select>
+          <div class="helper"><img src="assets/hole_punch_styles.svg" alt="Hole punch styles"><p>Pick the number that best matches your upright hole style.</p></div>
+        </div>
+
+        <div>
+          <label>Horizontal struts needed</label>
+          <input id="hStrutsNeeded" type="number" min="0" step="1" placeholder="0"/>
+        </div>
+        <div>
+          <label>Diagonal struts needed</label>
+          <input id="dStrutsNeeded" type="number" min="0" step="1" placeholder="0"/>
+        </div>
+
+        <div class="row" style="grid-column:1/-1">
+          <div>
+            <label>Frame Notes</label>
+            <textarea id="frameNotes" placeholder="Any details for this frame…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn ghost" id="saveFrame">Save frame</button>
+        <button class="btn primary" id="proceedDamage" disabled>Proceed to Damage</button>
+      </div>
+      <p class="small">“Proceed to Damage” becomes available once notes are entered (to confirm the frame entry is complete).</p>
+    </section>
+
+    <!-- DAMAGE -->
+    <section id="view-damage" class="card" hidden>
+      <h2>Damaged Location(s)</h2>
+      <div id="damageList" class="row"></div>
+      <div class="actions">
+        <button class="btn" id="addDamage">Add damage location</button>
+        <button class="btn primary" id="finishSurvey">Go to Done</button>
+      </div>
+    </section>
+
+    <!-- DONE -->
+    <section id="view-done" class="card" hidden>
+      <h2>Done</h2>
+      <p>Survey saved locally on this device. You can export a summary or start another survey at a different facility.</p>
+      <div class="actions">
+        <button class="btn" id="exportJson">Export JSON</button>
+        <button class="btn" id="exportCsv">Export CSV</button>
+        <button class="btn primary" id="newSurvey">Start new survey</button>
+      </div>
+      <div id="donePreview"></div>
+    </section>
+  </main>
+
+  <!-- Info modals -->
+  <dialog id="modal-depth">
+    <div class="modal-body">
+      <img src="assets/measure_depth.svg" alt="Depth help">
+      <h3>Depth</h3><p>Depth is front-to-back distance of the frame (upright). Measure in inches.</p>
+    </div>
+    <form method="dialog" class="actions"><button class="btn primary">Close</button></form>
+  </dialog>
+
+  <dialog id="modal-width">
+    <div class="modal-body">
+      <img src="assets/measure_width.svg" alt="Width help">
+      <h3>Width (front post)</h3><p>Measure the width of the front post. Enter inches.</p>
+    </div>
+    <form method="dialog" class="actions"><button class="btn primary">Close</button></form>
+  </dialog>
+
+  <dialog id="modal-strut-heights">
+    <div class="modal-body">
+      <img src="assets/strut_heights.svg" alt="Strut heights help">
+      <h3>Strut heights</h3><p>Measure from the floor to the <b>top</b> of each horizontal strut.</p>
+    </div>
+    <form method="dialog" class="actions"><button class="btn primary">Close</button></form>
+  </dialog>
+
+  <dialog id="modal-hole">
+    <div class="modal-body">
+      <img src="assets/hole_punch_styles.svg" alt="Hole punch styles help">
+      <h3>Hole punch styles</h3><p>Match the number to the image that best represents your upright holes.</p>
+    </div>
+    <form method="dialog" class="actions"><button class="btn primary">Close</button></form>
+  </dialog>
+
+  <dialog id="modal-beam">
+    <div class="modal-body">
+      <img src="assets/beam_measure.svg" alt="Beam height measuring help">
+      <h3>Beam level height</h3><p>Measure from the floor to the <b>bottom and top</b> of the beam connector.</p>
+    </div>
+    <form method="dialog" class="actions"><button class="btn primary">Close</button></form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
